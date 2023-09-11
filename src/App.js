@@ -1,16 +1,15 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef} from 'react';
 import {useFetch} from './useFetch'
 
 //Can be replaced with useReducer
-let index = -1;
 
 function App() {
   const [admin, setAdmin] = useState(false)
   const [user, setUser] = useState()
   
   const {loading, data, error} = useFetch(`https://api.github.com/users`)
-
+  const index = useRef(-1);
   useEffect( () => {
     if(user) {
       document.title = `Celebrate ${user.login}`
@@ -19,7 +18,7 @@ function App() {
   }, [user] );
 
   useEffect( () => {
-    console.log(`use is admin = ${admin ? "Logged in" : " Not Logged in"}`)
+    console.log(`user is admin = ${admin ? "Logged in" : " Not Logged in"}`)
   }, [admin])
 /*
   useEffect( () => {
@@ -35,8 +34,8 @@ function App() {
 
   if(data) {
     if(!user) {
-        index = 0;
-        setUser(data[index]);
+        index.current = 0;
+        setUser(data[index.current]);
         console.log(JSON.stringify(data,null,2))
     }
     console.log(user)
@@ -57,8 +56,8 @@ function App() {
           <h1> {user.login}</h1>
           { user.name && <p> {user.name}</p> }
           <button onClick={ () => 
-            { index = (index + 1 )% data.length 
-                setUser(data[index])
+            { index.current = (index.current + 1 )% data.length 
+                setUser(data[index.current])
             } } > Change Winner</button>
           <p> { admin ? "Logged in" : "Not Logged in" } </p>
             <button onClick={ ()=>setAdmin(!admin)} >Change Login</button>
